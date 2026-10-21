@@ -1,0 +1,10 @@
+{
+  "test_loss": 0.04502958804368973,
+  "test_accuracy": 0.9919724770642202,
+  "test_phishing_precision": 0.9907692307692307,
+  "test_phishing_recall": 0.9877300613496932,
+  "test_phishing_f1": 0.989247311827957,
+  "test_runtime": 275.3099,
+  "test_samples_per_second": 6.335,
+  "test_steps_per_second": 0.792
+}

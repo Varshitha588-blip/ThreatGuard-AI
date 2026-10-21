@@ -1,0 +1,24 @@
+﻿{
+  "endpoint": "POST /analyze/audio",
+  "server_status": 200,
+  "model": "Wav2Vec2 embeddings + Logistic Regression",
+  "genuine_test": {
+    "filename": "common_voice_de_38030959__genuine.wav",
+    "expected_label": "genuine",
+    "predicted_label": "genuine",
+    "genuine_probability": 0.9973,
+    "spoof_probability": 0.0027,
+    "duration_seconds": 4.1,
+    "embedding_dimensions": 768
+  },
+  "spoof_test": {
+    "filename": "common_voice_de_38033321__spoof.wav",
+    "expected_label": "spoof",
+    "predicted_label": "spoof",
+    "genuine_probability": 0.0023,
+    "spoof_probability": 0.9977,
+    "duration_seconds": 7.81,
+    "embedding_dimensions": 768
+  },
+  "note": "Two successful example requests; not a measure of overall model accuracy."
+}

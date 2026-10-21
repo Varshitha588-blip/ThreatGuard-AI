@@ -1,0 +1,63 @@
+﻿# Python environments
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python and test caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Frontend dependencies and build output
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# Datasets, extracted recordings, and generated features
+data/
+datasets/
+*.npz
+*.npy
+*.parquet
+
+# Large trained models and training checkpoints
+models/
+checkpoints/
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Generated prediction exports
+reports/*predictions.csv
+reports/audio/*predictions.csv
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local backups and editor backup copies
+backups/
+*.bak
+*.before_*
+
+# Additional backup files
+*.backup

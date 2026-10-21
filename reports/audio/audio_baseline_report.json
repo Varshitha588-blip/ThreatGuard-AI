@@ -1,0 +1,42 @@
+{
+  "selected_model": "logistic_regression",
+  "test_accuracy": 0.5833333333333334,
+  "test_precision": 0.5806451612903226,
+  "test_recall": 0.6,
+  "test_f1": 0.5901639344262295,
+  "confusion_matrix": [
+    [
+      17,
+      13
+    ],
+    [
+      12,
+      18
+    ]
+  ],
+  "validation_results": {
+    "logistic_regression": {
+      "validation_accuracy": 0.6333333333333333,
+      "validation_precision": 0.6333333333333333,
+      "validation_recall": 0.6333333333333333,
+      "validation_f1": 0.6333333333333333
+    },
+    "random_forest": {
+      "validation_accuracy": 0.5833333333333334,
+      "validation_precision": 0.5925925925925926,
+      "validation_recall": 0.5333333333333333,
+      "validation_f1": 0.5614035087719298
+    }
+  },
+  "recordings": {
+    "train": 280,
+    "validation": 60,
+    "test": 60
+  },
+  "feature_count": 90,
+  "label_mapping": {
+    "0": "genuine",
+    "1": "spoof"
+  },
+  "warning": "Preliminary baseline trained on a 400-recording sample. Results do not establish generalization to unseen spoofing systems."
+}

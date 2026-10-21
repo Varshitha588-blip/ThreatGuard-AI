@@ -1,0 +1,73 @@
+{
+  "model_type": "Wav2Vec2 embeddings + classical classifier",
+  "embedding_model": "facebook/wav2vec2-base",
+  "embedding_shape": [
+    400,
+    768
+  ],
+  "selected_classifier": "Logistic Regression",
+  "label_mapping": {
+    "0": "genuine",
+    "1": "spoof"
+  },
+  "split_sizes": {
+    "train": 280,
+    "validation": 60,
+    "test": 60
+  },
+  "validation_results": {
+    "Logistic Regression": {
+      "accuracy": 0.7,
+      "precision_spoof": 0.7,
+      "recall_spoof": 0.7,
+      "f1_spoof": 0.7,
+      "confusion_matrix": [
+        [
+          21,
+          9
+        ],
+        [
+          9,
+          21
+        ]
+      ]
+    },
+    "Linear SVM": {
+      "accuracy": 0.7,
+      "precision_spoof": 0.7,
+      "recall_spoof": 0.7,
+      "f1_spoof": 0.7,
+      "confusion_matrix": [
+        [
+          21,
+          9
+        ],
+        [
+          9,
+          21
+        ]
+      ]
+    }
+  },
+  "test_results": {
+    "accuracy": 0.6666666666666666,
+    "precision_spoof": 0.6470588235294118,
+    "recall_spoof": 0.7333333333333333,
+    "f1_spoof": 0.6875,
+    "confusion_matrix": [
+      [
+        18,
+        12
+      ],
+      [
+        8,
+        22
+      ]
+    ]
+  },
+  "limitations": [
+    "Small experimental dataset of 400 recordings.",
+    "Test metrics may vary with a larger and more diverse dataset.",
+    "Results do not establish production-level deepfake detection."
+  ]
+}

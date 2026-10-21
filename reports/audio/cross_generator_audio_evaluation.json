@@ -1,0 +1,108 @@
+{
+  "embedding_model": "facebook/wav2vec2-base",
+  "classifier": "StandardScaler + LogisticRegression",
+  "embedding_dimensions": 768,
+  "model_path": "models\\audio\\cross_generator_wav2vec2_classifier.joblib",
+  "dataset_path": "data\\audio\\cross_generator\\features_wav2vec2\\cross_generator_embeddings.npz",
+  "label_mapping": {
+    "0": "genuine",
+    "1": "spoof"
+  },
+  "test_results": {
+    "seen_test": {
+      "recordings": 1436,
+      "accuracy": 0.9944289693593314,
+      "genuine_precision": 0.9944289693593314,
+      "genuine_recall": 0.9944289693593314,
+      "genuine_f1": 0.9944289693593314,
+      "spoof_precision": 0.9944289693593314,
+      "spoof_recall": 0.9944289693593314,
+      "spoof_f1": 0.9944289693593314,
+      "confusion_matrix": [
+        [
+          714,
+          4
+        ],
+        [
+          4,
+          714
+        ]
+      ],
+      "classification_report": {
+        "genuine": {
+          "precision": 0.9944289693593314,
+          "recall": 0.9944289693593314,
+          "f1-score": 0.9944289693593314,
+          "support": 718.0
+        },
+        "spoof": {
+          "precision": 0.9944289693593314,
+          "recall": 0.9944289693593314,
+          "f1-score": 0.9944289693593314,
+          "support": 718.0
+        },
+        "accuracy": 0.9944289693593314,
+        "macro avg": {
+          "precision": 0.9944289693593314,
+          "recall": 0.9944289693593314,
+          "f1-score": 0.9944289693593314,
+          "support": 1436.0
+        },
+        "weighted avg": {
+          "precision": 0.9944289693593314,
+          "recall": 0.9944289693593314,
+          "f1-score": 0.9944289693593314,
+          "support": 1436.0
+        }
+      }
+    },
+    "unseen_test": {
+      "recordings": 1436,
+      "accuracy": 0.9965181058495822,
+      "genuine_precision": 0.99721059972106,
+      "genuine_recall": 0.9958217270194986,
+      "genuine_f1": 0.9965156794425087,
+      "spoof_precision": 0.9958275382475661,
+      "spoof_recall": 0.9972144846796658,
+      "spoof_f1": 0.9965205288796103,
+      "confusion_matrix": [
+        [
+          715,
+          3
+        ],
+        [
+          2,
+          716
+        ]
+      ],
+      "classification_report": {
+        "genuine": {
+          "precision": 0.99721059972106,
+          "recall": 0.9958217270194986,
+          "f1-score": 0.9965156794425087,
+          "support": 718.0
+        },
+        "spoof": {
+          "precision": 0.9958275382475661,
+          "recall": 0.9972144846796658,
+          "f1-score": 0.9965205288796103,
+          "support": 718.0
+        },
+        "accuracy": 0.9965181058495822,
+        "macro avg": {
+          "precision": 0.9965190689843131,
+          "recall": 0.9965181058495822,
+          "f1-score": 0.9965181041610596,
+          "support": 1436.0
+        },
+        "weighted avg": {
+          "precision": 0.996519068984313,
+          "recall": 0.9965181058495822,
+          "f1-score": 0.9965181041610595,
+          "support": 1436.0
+        }
+      }
+    }
+  },
+  "caution": "Results apply to these dataset splits and do not guarantee performance on all real-world voices or deepfake generators."
+}
