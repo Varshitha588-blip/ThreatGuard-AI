@@ -1,8 +1,26 @@
+﻿
 import { useEffect, useState } from 'react'
 import './App.css'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+const TEXT_API_URL = (import.meta.env.VITE_TEXT_API_URL || import.meta.env.VITE_API_BASE_URL || 'https://threatguard-ai-docker.onrender.com').replace(/\/$/, '')
+const AUDIO_API_URL = (import.meta.env.VITE_AUDIO_API_URL || TEXT_API_URL).replace(/\/$/, '')
 
+async function readApiResponse(response) {
+  const contentType = response.headers.get('content-type') || ''
+
+  if (contentType.includes('application/json')) {
+    return await response.json()
+  }
+
+  const body = await response.text()
+
+  throw new Error(
+    `Server returned a non-JSON response (HTTP ${response.status}). ` +
+      (response.status >= 500
+        ? 'The service may be unavailable or restarting. Please try again shortly.'
+        : body.slice(0, 160) || 'Unexpected server response.'),
+  )
+}
 function humanize(key) {
   return String(key)
     .replaceAll('_', ' ')
@@ -193,21 +211,52 @@ function App() {
 
   useEffect(() => {
     let active = true
+    let inFlight = false
+    let controller = null
 
-    fetch(`${API_BASE}/health`)
-      .then((response) => {
-        if (!response.ok) throw new Error('API unavailable')
-        return response.json()
-      })
-      .then(() => {
+    async function checkHealth() {
+      if (!active || inFlight) return
+
+      inFlight = true
+      const requestController = new AbortController()
+      controller = requestController
+
+      const timeoutId = setTimeout(() => {
+        requestController.abort()
+      }, 8000)
+
+      try {
+        const response = await fetch(`${TEXT_API_URL}/health`, {
+          method: 'GET',
+          cache: 'no-store',
+          signal: requestController.signal,
+        })
+
+        if (!response.ok) {
+          throw new Error('Health check failed')
+        }
+
+        // Accept a successful health endpoint response without assuming
+        // whether the server returns JSON or plain text.
         if (active) setApiStatus('online')
-      })
-      .catch(() => {
+      } catch {
         if (active) setApiStatus('offline')
-      })
+      } finally {
+        clearTimeout(timeoutId)
+        if (controller === requestController) controller = null
+        inFlight = false
+      }
+    }
+
+    checkHealth()
+
+    // Retry periodically so the UI can recover when the server wakes up.
+    const intervalId = setInterval(checkHealth, 10000)
 
     return () => {
       active = false
+      clearInterval(intervalId)
+      controller?.abort()
     }
   }, [])
 
@@ -230,13 +279,13 @@ function App() {
     setLoading(true)
 
     try {
-      const response = await fetch(`${API_BASE}/analyze/text`, {
+      const response = await fetch(`${TEXT_API_URL}/analyze/text`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: text.trim() }),
       })
 
-      const data = await response.json()
+      const data = await readApiResponse(response)
 
       if (!response.ok) {
         throw new Error(data.detail || 'Text analysis failed.')
@@ -246,7 +295,7 @@ function App() {
     } catch (err) {
       setError(
         err.message === 'Failed to fetch'
-          ? 'Cannot reach the API. Make sure FastAPI is running and CORS is configured.'
+          ? 'Unable to reach the service. It may be waking up or temporarily unavailable. Please try again shortly.'
           : err.message,
       )
     } finally {
@@ -270,12 +319,12 @@ function App() {
       const formData = new FormData()
       formData.append('file', audio)
 
-      const response = await fetch(`${API_BASE}/analyze/audio`, {
+      const response = await fetch(`${AUDIO_API_URL}/analyze/audio`, {
         method: 'POST',
         body: formData,
       })
 
-      const data = await response.json()
+      const data = await readApiResponse(response)
 
       if (!response.ok) {
         throw new Error(data.detail || 'Audio analysis failed.')
@@ -285,7 +334,7 @@ function App() {
     } catch (err) {
       setError(
         err.message === 'Failed to fetch'
-          ? 'Cannot reach the API. Make sure FastAPI is running and CORS is configured.'
+          ? 'Unable to reach the service. It may be waking up or temporarily unavailable. Please try again shortly.'
           : err.message,
       )
     } finally {
@@ -303,7 +352,7 @@ function App() {
           </span>
         </a>
 
-        <div className={`api-status ${apiStatus}`}>
+        <div className={`api-status ${apiStatus}`} role="status" aria-live="polite">
           <span className="status-dot" />
           API {apiStatus === 'checking' ? 'Checking' : apiStatus}
         </div>
@@ -387,11 +436,11 @@ function App() {
 
               <div className="input-footer">
                 <span>{text.length.toLocaleString()} / 20,000 characters</span>
-                <span>Text model ? DistilBERT</span>
+                <span>Text model â€” DistilBERT</span>
               </div>
 
               <button className="primary-button" type="submit" disabled={loading}>
-                {loading ? 'Analyzing text...' : 'Analyze message ?'}
+                {loading ? 'Analyzing text...' : 'Analyze message'}
               </button>
             </form>
           ) : (
@@ -402,12 +451,12 @@ function App() {
               </p>
 
               <label className="upload-zone" htmlFor="audio-file">
-                <span className="upload-icon" aria-hidden="true">?</span>
+                <span className="upload-icon" aria-hidden="true">â†‘</span>
                 <strong>{audio ? audio.name : 'Choose an audio file'}</strong>
                 <span>
                   {audio
                     ? `${(audio.size / (1024 * 1024)).toFixed(2)} MB`
-                    : 'WAV, MP3, FLAC or OGG ? Maximum 20 MB'}
+                    : 'WAV, MP3, FLAC or OGG â€” Maximum 20 MB'}
                 </span>
                 <input
                   id="audio-file"
@@ -423,12 +472,12 @@ function App() {
               </label>
 
               <div className="input-footer">
-                <span>Audio model ? Wav2Vec2 embeddings</span>
+                <span>Audio model â€” Wav2Vec2 embeddings</span>
                 <span>Experimental classifier</span>
               </div>
 
               <button className="primary-button" type="submit" disabled={loading}>
-                {loading ? 'Analyzing audio...' : 'Analyze recording ?'}
+                {loading ? 'Analyzing audio...' : 'Analyze recording'}
               </button>
             </form>
           )}
@@ -458,10 +507,15 @@ function App() {
 
       <footer className="footer">
         <span>THREATGUARD AI</span>
-        <span>Experimental research project ? 2026</span>
+        <span>Experimental research project â€” 2026</span>
       </footer>
     </div>
   )
 }
 
 export default App
+
+
+
+
+

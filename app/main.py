@@ -9,6 +9,12 @@ from app.services.text_detector import predict_text
 from app.services.audio_detector import predict_audio
 from app.services.explanation import explain_text, explain_audio
 
+
+AUDIO_ANALYSIS_ENABLED = (
+    os.getenv("AUDIO_ANALYSIS_ENABLED", "true").strip().lower()
+    == "true"
+)
+
 app = FastAPI(
     title="AI Phishing and Deepfake Detection API",
     version="0.2.0",
@@ -72,6 +78,14 @@ def analyze_text(request: TextRequest):
 
 @app.post("/analyze/audio")
 async def analyze_audio(file: UploadFile = File(...)):
+    if not AUDIO_ANALYSIS_ENABLED:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Audio analysis is temporarily disabled on this deployment "
+                "because of memory limits. Text analysis remains available."
+            ),
+        )
     allowed_extensions = {".wav", ".mp3", ".flac", ".ogg"}
     filename = file.filename or ""
     extension = Path(filename).suffix.lower()
